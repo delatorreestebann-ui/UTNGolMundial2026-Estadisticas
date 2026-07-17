@@ -157,6 +157,42 @@ public class StatisticsService {
         return t != null ? toTeamDTO(t) : null;
     }
 
+    /** RF10 — Crear una nueva selección desde el panel administrativo. */
+    @Transactional
+    @Auditable
+    public TeamDTO createTeam(TeamInputDTO dto) {
+        Team t = new Team();
+        applyTeamInputDTO(t, dto);
+        return toTeamDTO(teamRepo.save(t));
+    }
+
+    /** RF10 — Actualizar los datos de una selección existente. */
+    @Transactional
+    @Auditable
+    public TeamDTO updateTeam(Integer idTeam, TeamInputDTO dto) {
+        Team t = teamRepo.findById(idTeam);
+        if (t == null) return null;
+        applyTeamInputDTO(t, dto);
+        return toTeamDTO(teamRepo.update(t));
+    }
+
+    private void applyTeamInputDTO(Team t, TeamInputDTO dto) {
+        t.setName(dto.name);
+        t.setFifaCode(dto.fifaCode);
+        t.setIsHost(dto.isHost != null ? dto.isHost : Boolean.FALSE);
+        t.setQualification(dto.qualification);
+        if (dto.idGroup != null) {
+            TournamentGroup g = new TournamentGroup();
+            g.setIdGroup(dto.idGroup);
+            t.setGroup(g);
+        }
+        if (dto.idConfederation != null) {
+            Confederation c = new Confederation();
+            c.setIdConfederation(dto.idConfederation);
+            t.setConfederation(c);
+        }
+    }
+
     // ---- Mappers ----
 
     private MatchDTO toDTO(Match m) {

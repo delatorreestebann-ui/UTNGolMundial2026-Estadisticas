@@ -10,16 +10,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
 
-/**
- * REST resource for tournament matches.
- *
- * GET  /api/partidos                    → All matches (full calendar)
- * GET  /api/partidos?fase=GRUPOS        → Matches filtered by phase
- * GET  /api/partidos/{id}               → Match detail (RF08)
- * PUT  /api/partidos/{id}/resultado     → Register official result (RF11)
- * POST /api/partidos                    → Create knockout-stage match (RF10)
- * PUT  /api/partidos/{id}               → Update match data (RF10)
- */
 @Path("/partidos")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -28,7 +18,6 @@ public class MatchResource {
     @Inject
     private StatisticsService service;
 
-    /** RF04 / RF09 — Full calendar or filtered by phase. */
     @GET
     public Response getMatches(@QueryParam("fase") String phase) {
         List<MatchDTO> matches = (phase != null && !phase.isBlank())
@@ -37,7 +26,6 @@ public class MatchResource {
         return Response.ok(matches).build();
     }
 
-    /** RF08 — Match detail. */
     @GET
     @Path("/{id}")
     public Response getMatch(@PathParam("id") Integer id) {
@@ -48,12 +36,7 @@ public class MatchResource {
                                    .build();
     }
 
-    /**
-     * RF11 — Register the official result of a finished match.
-     * Updates the score, recalculates standings and notifies UTNGolCoin.
-     *
-     * Example body: { "homeGoals": 2, "awayGoals": 1 }
-     */
+   
     @PUT
     @Path("/{id}/resultado")
     public Response registerResult(@PathParam("id") Integer id, ResultDTO dto) {
@@ -74,10 +57,7 @@ public class MatchResource {
                                         .build();
     }
 
-    /**
-     * RF10 — Create a knockout-stage match from the admin panel.
-     * E.g.: round of 16, quarterfinals, semifinal, third place, final.
-     */
+   
     @POST
     public Response createMatch(MatchInputDTO dto) {
         if (dto == null) {
@@ -89,9 +69,7 @@ public class MatchResource {
         return Response.status(Response.Status.CREATED).entity(created).build();
     }
 
-    /**
-     * RF10 — Update match data (venue, time, odds, teams for knockout stage).
-     */
+   
     @PUT
     @Path("/{id}")
     public Response updateMatch(@PathParam("id") Integer id, MatchInputDTO dto) {

@@ -24,6 +24,12 @@ public class TeamRepository {
     }
 
     @Transactional
+    public Team save(Team team) {
+        em.persist(team);
+        return team;
+    }
+
+    @Transactional
     public Team update(Team team) {
         return em.merge(team);
     }
