@@ -25,7 +25,8 @@ public class RestApplication extends Application {
             ec.edu.utn.estadisticas.resource.RoleResource.class,
             ec.edu.utn.estadisticas.resource.UserResource.class,
             ec.edu.utn.estadisticas.resource.LoginResource.class,
-            ec.edu.utn.estadisticas.resource.LogoutResource.class
+            ec.edu.utn.estadisticas.resource.LogoutResource.class,
+            ec.edu.utn.estadisticas.filter.AuthorizationFilter.class
 
         );
     }
