@@ -49,6 +49,13 @@
     <artifactId>swagger-ui</artifactId>
     <version>5.17.14</version>
 </dependency>
+
+<!-- BCrypt hash de contraseñas) -->
+        <dependency>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+            <version>0.4</version>
+        </dependency>
     </dependencies>
     
     <build>

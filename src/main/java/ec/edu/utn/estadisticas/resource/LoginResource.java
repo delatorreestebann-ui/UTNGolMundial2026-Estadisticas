@@ -1,0 +1,44 @@
+package ec.edu.utn.estadisticas.resource;
+
+import ec.edu.utn.estadisticas.dto.LoginDTO;
+import ec.edu.utn.estadisticas.dto.UserDTO;
+import ec.edu.utn.estadisticas.service.UserService;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+
+/**
+ * POST /api/login → RF02.
+ * Devuelve los datos del usuario (incluido su rol) si las credenciales son correctas.
+ * El frontend debe guardar username/password para reenviarlos en el header
+ * "Authorization: Basic ..." en las peticiones que requieran permisos (paso 5).
+ */
+@Path("/login")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public class LoginResource {
+
+    @Inject
+    private UserService service;
+
+    @POST
+    public Response login(LoginDTO credentials) {
+        if (credentials == null || credentials.username == null || credentials.password == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                           .entity("{\"error\":\"Se requieren username y password\"}")
+                           .build();
+        }
+        UserDTO user = service.login(credentials);
+        if (user == null) {
+            // Mensaje genérico a propósito: no revela si falló el username o el password.
+            return Response.status(Response.Status.UNAUTHORIZED)
+                           .entity("{\"error\":\"Credenciales inválidas\"}")
+                           .build();
+        }
+        return Response.ok(user).build();
+    }
+}

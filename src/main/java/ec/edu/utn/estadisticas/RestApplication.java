@@ -22,7 +22,10 @@ public class RestApplication extends Application {
             ec.edu.utn.estadisticas.resource.MatchResource.class,
             ec.edu.utn.estadisticas.resource.TeamResource.class,
             ec.edu.utn.estadisticas.resource.GroupResource.class,
-            ec.edu.utn.estadisticas.resource.RoleResource.class
+            ec.edu.utn.estadisticas.resource.RoleResource.class,
+            ec.edu.utn.estadisticas.resource.UserResource.class,
+            ec.edu.utn.estadisticas.resource.LoginResource.class,
+            ec.edu.utn.estadisticas.resource.LogoutResource.class
 
         );
     }
