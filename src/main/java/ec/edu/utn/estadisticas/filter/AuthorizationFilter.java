@@ -13,14 +13,16 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
 import java.util.Base64;
 
-
+// Este filtro decide quién puede hacer qué.
 //
-// - Los GET (leer datos) los deja pasar a cualquiera, como invitado.
-//   Solo /usuarios es la excepción: siempre pide admin, ni para leer.
-// - login, logout y el registro (POST /usuarios) tampoco piden nada,
-//   porque ahí la persona todavía no ha iniciado sesión.
-// - Todo lo demás (crear o editar algo) sí pide usuario y contraseña
-//   de un ADMINISTRADOR.
+// - Para leer datos (GET), no pide nada, cualquiera puede entrar como invitado.
+//   La única excepción es todo lo relacionado a /usuarios: ahí sí siempre
+//   pide ser administrador, incluso solo para consultar.
+// - login, logout y el registro de un usuario nuevo (POST /usuarios) tampoco
+//   piden nada, porque en ese momento la persona todavía no tiene con qué
+//   identificarse (recién se está registrando o iniciando sesión).
+// - Para todo lo demás (crear o editar algo), sí exige email y contraseña
+//   (Basic Auth) de un ADMINISTRADOR.
 @Provider
 @Priority(Priorities.AUTHENTICATION)
 public class AuthorizationFilter implements ContainerRequestFilter {
@@ -31,6 +33,8 @@ public class AuthorizationFilter implements ContainerRequestFilter {
     private UserRepository userRepo;
     @Inject
     private PasswordService passwordService;
+    @Inject
+    private CurrentUserContext currentUserContext;
 
     @Override
     public void filter(ContainerRequestContext requestContext) {
@@ -62,13 +66,13 @@ public class AuthorizationFilter implements ContainerRequestFilter {
             return;
         }
 
-        String[] credentials = decode(authHeader);
+        String[] credentials = decode(authHeader); // credentials[0] = email, credentials[1] = password
         if (credentials == null) {
             abort(requestContext, Response.Status.UNAUTHORIZED, "Encabezado de autenticación inválido");
             return;
         }
 
-        User user = userRepo.findByUsername(credentials[0]);
+        User user = userRepo.findByEmail(credentials[0]);
         if (user == null || !Boolean.TRUE.equals(user.getActive())
                 || !passwordService.verify(credentials[1], user.getPasswordHash())) {
             abort(requestContext, Response.Status.UNAUTHORIZED, "Credenciales inválidas");
@@ -77,8 +81,12 @@ public class AuthorizationFilter implements ContainerRequestFilter {
 
         if (user.getRole() == null || !ADMIN_ROLE.equals(user.getRole().getName())) {
             abort(requestContext, Response.Status.FORBIDDEN, "No tiene permisos de administrador para esta acción");
+            return;
         }
-        // Si llegó hasta aquí sin abortar, está autorizado y la petición continúa.
+
+        // Ya pasó todo. Guardamos quién es, para que después el AuditInterceptor
+        // sepa a quién anotarle esta acción.
+        currentUserContext.setEmail(user.getEmail());
     }
 
     private String[] decode(String authHeader) {

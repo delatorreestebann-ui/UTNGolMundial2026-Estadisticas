@@ -27,6 +27,10 @@ public class UserService {
     @Inject
     private PasswordService passwordService;
 
+    //  Registro público 
+
+    // Crea un usuario nuevo. Siempre queda activo y con rol usuario,
+    // sin importar lo que venga en idRole/active
     @Transactional
     @Auditable
     public UserDTO registerUser(UserInputDTO dto) {
@@ -44,7 +48,7 @@ public class UserService {
         return toDTO(userRepo.save(user));
     }
 
-  
+    // RNF03 — Validaciones antes de registrar. Devuelve el error, o null si está bien.
     public String validateRegistration(UserInputDTO dto) {
         if (dto == null) return "Cuerpo de la solicitud inválido";
         if (dto.name == null || dto.name.trim().isEmpty()) return "El campo 'name' es obligatorio";
@@ -55,6 +59,8 @@ public class UserService {
         if (userRepo.findByEmail(dto.email) != null) return "Ese email ya está registrado";
         return null;
     }
+
+    // gestión de usuarios
 
     public List<UserDTO> listUsers() {
         return userRepo.findAll().stream().map(this::toDTO).collect(Collectors.toList());
@@ -85,9 +91,13 @@ public class UserService {
         return toDTO(userRepo.update(user));
     }
 
+    //  login logout 
+
+    // Ahora el login es con email + password.
+    // Devuelve el UserDTO si las credenciales son correctas y el usuario está activo si no null
     @Transactional
     public UserDTO login(LoginDTO credentials) {
-        User user = userRepo.findByUsername(credentials.username);
+        User user = userRepo.findByEmail(credentials.email);
         if (user == null || !user.getActive()) return null;
         if (!passwordService.verify(credentials.password, user.getPasswordHash())) return null;
 
@@ -96,7 +106,8 @@ public class UserService {
         return toDTO(user);
     }
 
-    
+    // Convierte un User a UserDTO. Se usa para devolver datos al frontend sin exponer el passwordHash.
+
     private UserDTO toDTO(User u) {
         UserDTO dto = new UserDTO();
         dto.idUser = u.getIdUser();

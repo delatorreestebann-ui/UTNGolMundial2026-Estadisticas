@@ -1,7 +1,7 @@
 package ec.edu.utn.estadisticas.dto;
 
-/** dto de entrada para el login*/
+// Lo que manda el frontend para iniciar sesión
 public class LoginDTO {
-    public String username;
+    public String email;
     public String password;
 }

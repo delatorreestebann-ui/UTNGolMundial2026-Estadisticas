@@ -5,6 +5,8 @@ import jakarta.ws.rs.core.Application;
 
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.servers.Server;
 import java.util.Set;
 
@@ -13,6 +15,12 @@ import java.util.Set;
     servers = {
         @Server(url = "/estadisticas-backend", description = "Servidor local WildFly")
     }
+)
+
+@SecurityScheme(
+    name = "basicAuth",
+    type = SecuritySchemeType.HTTP,
+    scheme = "basic"
 )
 public class RestApplication extends Application {
     @Override
@@ -27,7 +35,6 @@ public class RestApplication extends Application {
             ec.edu.utn.estadisticas.resource.LoginResource.class,
             ec.edu.utn.estadisticas.resource.LogoutResource.class,
             ec.edu.utn.estadisticas.filter.AuthorizationFilter.class
-
         );
     }
 }

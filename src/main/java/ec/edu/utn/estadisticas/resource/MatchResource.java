@@ -4,11 +4,13 @@ import ec.edu.utn.estadisticas.dto.MatchDTO;
 import ec.edu.utn.estadisticas.dto.MatchInputDTO;
 import ec.edu.utn.estadisticas.dto.ResultDTO;
 import ec.edu.utn.estadisticas.service.StatisticsService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
+
 
 @Path("/partidos")
 @Produces(MediaType.APPLICATION_JSON)
@@ -36,9 +38,9 @@ public class MatchResource {
                                    .build();
     }
 
-   
     @PUT
     @Path("/{id}/resultado")
+    @SecurityRequirement(name = "basicAuth")
     public Response registerResult(@PathParam("id") Integer id, ResultDTO dto) {
         if (dto == null || dto.homeGoals == null || dto.awayGoals == null) {
             return Response.status(Response.Status.BAD_REQUEST)
@@ -57,8 +59,9 @@ public class MatchResource {
                                         .build();
     }
 
-   
+ 
     @POST
+    @SecurityRequirement(name = "basicAuth")
     public Response createMatch(MatchInputDTO dto) {
         if (dto == null) {
             return Response.status(Response.Status.BAD_REQUEST)
@@ -72,6 +75,7 @@ public class MatchResource {
    
     @PUT
     @Path("/{id}")
+    @SecurityRequirement(name = "basicAuth")
     public Response updateMatch(@PathParam("id") Integer id, MatchInputDTO dto) {
         MatchDTO updated = service.updateMatch(id, dto);
         return updated != null ? Response.ok(updated).build()

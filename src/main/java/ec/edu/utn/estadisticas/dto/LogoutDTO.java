@@ -1,6 +1,6 @@
 package ec.edu.utn.estadisticas.dto;
 
-/** dto para el logout */
+// Lo que manda el frontend al cerrar sesión 
 public class LogoutDTO {
-    public String username;
+    public String email;
 }

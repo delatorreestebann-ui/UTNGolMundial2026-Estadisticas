@@ -3,23 +3,13 @@ package ec.edu.utn.estadisticas.resource;
 import ec.edu.utn.estadisticas.dto.UserDTO;
 import ec.edu.utn.estadisticas.dto.UserInputDTO;
 import ec.edu.utn.estadisticas.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
 
-/**
- * REST resource for user accounts.
- *
- * POST /api/usuarios       → Registro público (RF01)
- * GET  /api/usuarios       → Listar usuarios (RF23 - admin)
- * GET  /api/usuarios/{id}  → Detalle de un usuario
- * PUT  /api/usuarios/{id}  → Actualizar datos / rol / estado (RF23 - admin)
- *
- * Nota: en este paso todavía no hay filtro de autorización (eso es el paso 5),
- * así que por ahora estos endpoints están abiertos igual que los demás.
- */
 @Path("/usuarios")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -41,6 +31,7 @@ public class UserResource {
     }
 
     @GET
+    @SecurityRequirement(name = "basicAuth")
     public Response getUsers() {
         List<UserDTO> users = service.listUsers();
         return Response.ok(users).build();
@@ -48,6 +39,7 @@ public class UserResource {
 
     @GET
     @Path("/{id}")
+    @SecurityRequirement(name = "basicAuth")
     public Response getUser(@PathParam("id") Integer id) {
         UserDTO u = service.getUser(id);
         return u != null ? Response.ok(u).build()
@@ -58,6 +50,7 @@ public class UserResource {
 
     @PUT
     @Path("/{id}")
+    @SecurityRequirement(name = "basicAuth")
     public Response updateUser(@PathParam("id") Integer id, UserInputDTO dto) {
         if (dto == null) {
             return Response.status(Response.Status.BAD_REQUEST)

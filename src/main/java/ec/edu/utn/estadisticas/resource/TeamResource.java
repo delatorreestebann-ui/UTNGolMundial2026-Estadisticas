@@ -3,6 +3,7 @@ package ec.edu.utn.estadisticas.resource;
 import ec.edu.utn.estadisticas.dto.TeamDTO;
 import ec.edu.utn.estadisticas.dto.TeamInputDTO;
 import ec.edu.utn.estadisticas.service.StatisticsService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -18,14 +19,12 @@ public class TeamResource {
     @Inject
     private StatisticsService service;
 
-    /** RF07 — Full listing of teams with their statistics. */
     @GET
     public Response getTeams() {
         List<TeamDTO> teams = service.getTeams();
         return Response.ok(teams).build();
     }
 
-    /** RF07 — Full statistics for a specific team. */
     @GET
     @Path("/{id}")
     public Response getTeam(@PathParam("id") Integer id) {
@@ -36,11 +35,9 @@ public class TeamResource {
                                    .build();
     }
 
-    /**
-     * RF10 — Crear una nueva selección desde el panel administrativo.
-     * Ejemplo de cuerpo: { "name": "Ecuador", "fifaCode": "ECU", "idGroup": 3, "idConfederation": 2 }
-     */
+
     @POST
+    @SecurityRequirement(name = "basicAuth")
     public Response createTeam(TeamInputDTO dto) {
         String error = validate(dto);
         if (error != null) {
@@ -52,11 +49,10 @@ public class TeamResource {
         return Response.status(Response.Status.CREATED).entity(created).build();
     }
 
-    /**
-     * RF10 — Actualizar los datos de una selección existente.
-     */
+   
     @PUT
     @Path("/{id}")
+    @SecurityRequirement(name = "basicAuth")
     public Response updateTeam(@PathParam("id") Integer id, TeamInputDTO dto) {
         String error = validate(dto);
         if (error != null) {
@@ -71,7 +67,6 @@ public class TeamResource {
                                          .build();
     }
 
-    /** RNF10 — Validaciones básicas antes de crear/actualizar una selección. */
     private String validate(TeamInputDTO dto) {
         if (dto == null) {
             return "Cuerpo de la solicitud inválido";

@@ -11,12 +11,10 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-/**
- * POST /api/login → RF02.
- * Devuelve los datos del usuario (incluido su rol) si las credenciales son correctas.
- * El frontend debe guardar username/password para reenviarlos en el header
- * "Authorization: Basic ..." en las peticiones que requieran permisos (paso 5).
- */
+// POST /api/login
+// Devuelve los datos del usuario si el email y password son correctos.
+// El frontend debe guardar ese email y pasword
+// "authorization en las peticiones que necesiten permisos de admin.
 @Path("/login")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -27,14 +25,14 @@ public class LoginResource {
 
     @POST
     public Response login(LoginDTO credentials) {
-        if (credentials == null || credentials.username == null || credentials.password == null) {
+        if (credentials == null || credentials.email == null || credentials.password == null) {
             return Response.status(Response.Status.BAD_REQUEST)
-                           .entity("{\"error\":\"Se requieren username y password\"}")
+                           .entity("{\"error\":\"Se requieren email y password\"}")
                            .build();
         }
         UserDTO user = service.login(credentials);
         if (user == null) {
-            // Mensaje genérico a propósito: no revela si falló el username o el password.
+            // Mensaje genérico a propósito: no dice si falló el email o el password.
             return Response.status(Response.Status.UNAUTHORIZED)
                            .entity("{\"error\":\"Credenciales inválidas\"}")
                            .build();
