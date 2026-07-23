@@ -1,9 +1,6 @@
 package ec.edu.utn.estadisticas.dto;
 
-/**
- * dto para registrar o actualizar un usuario.
- * solo el admin, al actualizar, puede cambiar idrole y active.
- */
+
 public class UserInputDTO {
     public String name;
     public String email;

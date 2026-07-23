@@ -13,16 +13,16 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
 import java.util.Base64;
 
-// Este filtro decide quién puede hacer qué.
-//
-// - Para leer datos (GET), no pide nada, cualquiera puede entrar como invitado.
-//   La única excepción es todo lo relacionado a /usuarios: ahí sí siempre
-//   pide ser administrador, incluso solo para consultar.
-// - login, logout y el registro de un usuario nuevo (POST /usuarios) tampoco
-//   piden nada, porque en ese momento la persona todavía no tiene con qué
-//   identificarse (recién se está registrando o iniciando sesión).
-// - Para todo lo demás (crear o editar algo), sí exige email y contraseña
-//   (Basic Auth) de un ADMINISTRADOR.
+
+
+
+
+
+
+
+
+
+
 @Provider
 @Priority(Priorities.AUTHENTICATION)
 public class AuthorizationFilter implements ContainerRequestFilter {
@@ -38,35 +38,37 @@ public class AuthorizationFilter implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext requestContext) {
-        String path = requestContext.getUriInfo().getPath(); // relativo a /api, ej: "usuarios/5"
+        String path = requestContext.getUriInfo().getPath(); 
         if (path.startsWith("/")) {
-            path = path.substring(1); // por si el servidor lo entrega con "/" al inicio
+            path = path.substring(1); 
         }
         String method = requestContext.getMethod();
 
-        // Rutas siempre públicas, sin excepción
+        
         if (path.equals("login") || path.equals("logout")) {
             return;
         }
         if (path.equals("usuarios") && "POST".equalsIgnoreCase(method)) {
-            return; // registro público (RF01)
+            return; 
         }
 
         boolean isUserManagement = path.equals("usuarios") || path.startsWith("usuarios/");
+        boolean isAuditLog = path.equals("auditoria") || path.startsWith("auditoria/");
 
-        // Lecturas abiertas para invitados (RF26), salvo la gestión de usuarios
-        if ("GET".equalsIgnoreCase(method) && !isUserManagement) {
+        
+        
+        if ("GET".equalsIgnoreCase(method) && !isUserManagement && !isAuditLog) {
             return;
         }
 
-        // De aquí en adelante, se exige un ADMINISTRADOR autenticado
+        
         String authHeader = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
         if (authHeader == null || !authHeader.startsWith("Basic ")) {
             abort(requestContext, Response.Status.UNAUTHORIZED, "Se requiere autenticación (Basic Auth)");
             return;
         }
 
-        String[] credentials = decode(authHeader); // credentials[0] = email, credentials[1] = password
+        String[] credentials = decode(authHeader); 
         if (credentials == null) {
             abort(requestContext, Response.Status.UNAUTHORIZED, "Encabezado de autenticación inválido");
             return;
@@ -84,8 +86,8 @@ public class AuthorizationFilter implements ContainerRequestFilter {
             return;
         }
 
-        // Ya pasó todo. Guardamos quién es, para que después el AuditInterceptor
-        // sepa a quién anotarle esta acción.
+        
+        
         currentUserContext.setEmail(user.getEmail());
     }
 

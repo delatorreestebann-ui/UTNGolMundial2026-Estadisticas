@@ -13,13 +13,13 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.logging.Logger;
 
-// Auditoría (RF24). Cada vez que una acción marcada con @Auditable termina
-// bien, se guarda en la tabla auditoria: qué se hizo, cuándo, y quién lo hizo
-// (si había un admin con sesión).
-//
-// Si la acción falla, solo se anota en el log de la consola, como ya estaba
-// antes. No se intenta guardar en la BD para no complicar las cosas cuando
-// algo sale mal a mitad de camino.
+
+
+
+
+
+
+
 @Auditable
 @Interceptor
 public class AuditInterceptor {
@@ -66,8 +66,8 @@ public class AuditInterceptor {
 
             auditLogRepo.save(log);
         } catch (Exception ex) {
-            // Si esto falla, no debe arruinar la acción que sí funcionó bien.
-            // Solo lo dejamos anotado en el log.
+            
+            
             LOG.warning("No se pudo guardar el registro de auditoría: " + ex.getMessage());
         }
     }

@@ -12,14 +12,19 @@ import jakarta.ws.rs.core.Response;
 import java.util.List;
 
 
+
+
 @Path("/partidos")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class MatchResource {
 
+    
     @Inject
     private StatisticsService service;
 
+    
+    
     @GET
     public Response getMatches(@QueryParam("fase") String phase) {
         List<MatchDTO> matches = (phase != null && !phase.isBlank())
@@ -28,6 +33,8 @@ public class MatchResource {
         return Response.ok(matches).build();
     }
 
+    
+    
     @GET
     @Path("/{id}")
     public Response getMatch(@PathParam("id") Integer id) {
@@ -38,10 +45,14 @@ public class MatchResource {
                                    .build();
     }
 
+    
+    
+    
     @PUT
     @Path("/{id}/resultado")
     @SecurityRequirement(name = "basicAuth")
     public Response registerResult(@PathParam("id") Integer id, ResultDTO dto) {
+        
         if (dto == null || dto.homeGoals == null || dto.awayGoals == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                            .entity("{\"error\":\"golesLocal y golesVisitante son obligatorios\"}")
@@ -52,6 +63,8 @@ public class MatchResource {
                            .entity("{\"error\":\"Los goles no pueden ser negativos\"}")
                            .build();
         }
+        
+        
         MatchDTO result = service.registerResult(id, dto);
         return result != null ? Response.ok(result).build()
                               : Response.status(Response.Status.NOT_FOUND)
@@ -59,7 +72,9 @@ public class MatchResource {
                                         .build();
     }
 
- 
+    
+    
+    
     @POST
     @SecurityRequirement(name = "basicAuth")
     public Response createMatch(MatchInputDTO dto) {
@@ -72,7 +87,8 @@ public class MatchResource {
         return Response.status(Response.Status.CREATED).entity(created).build();
     }
 
-   
+    
+    
     @PUT
     @Path("/{id}")
     @SecurityRequirement(name = "basicAuth")

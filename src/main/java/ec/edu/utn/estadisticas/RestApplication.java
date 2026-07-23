@@ -17,6 +17,9 @@ import java.util.Set;
     }
 )
 
+
+
+
 @SecurityScheme(
     name = "basicAuth",
     type = SecuritySchemeType.HTTP,
@@ -34,6 +37,9 @@ public class RestApplication extends Application {
             ec.edu.utn.estadisticas.resource.UserResource.class,
             ec.edu.utn.estadisticas.resource.LoginResource.class,
             ec.edu.utn.estadisticas.resource.LogoutResource.class,
+            ec.edu.utn.estadisticas.resource.VenueResource.class,
+            ec.edu.utn.estadisticas.resource.PhaseResource.class,
+            ec.edu.utn.estadisticas.resource.AuditLogResource.class,
             ec.edu.utn.estadisticas.filter.AuthorizationFilter.class
         );
     }

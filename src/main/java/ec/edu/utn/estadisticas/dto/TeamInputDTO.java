@@ -1,8 +1,6 @@
 package ec.edu.utn.estadisticas.dto;
 
-/**
- * DTO de entrada para crear/actualizar una selección.
- */
+
 public class TeamInputDTO {
     public String name;
     public String fifaCode;

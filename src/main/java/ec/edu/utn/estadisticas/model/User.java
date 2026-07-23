@@ -19,7 +19,7 @@ public class User {
     @Column(name = "username")
     private String username;
 
-    /** Never store the plain password — only the hash (RNF04). */
+    
     @Column(name = "passwordhash")
     private String passwordHash;
 

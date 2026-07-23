@@ -24,7 +24,7 @@ public class StatisticsService {
     @Inject
     private NotificationService notificationService;
 
-    // ---- Matches ----
+    
 
     public List<MatchDTO> getMatches() {
         return matchRepo.findAll().stream().map(this::toDTO).collect(Collectors.toList());
@@ -43,49 +43,59 @@ public class StatisticsService {
         return matchRepo.findByGroup(idGroup).stream().map(this::toDTO).collect(Collectors.toList());
     }
 
+    
+    
+    
     @Transactional
     @Auditable
     public MatchDTO registerResult(Integer idMatch, ResultDTO dto) {
         Match match = matchRepo.findById(idMatch);
         if (match == null) return null;
 
+        
         match.setHomeGoals(dto.homeGoals);
         match.setAwayGoals(dto.awayGoals);
         match.setStatus("FINALIZADO");
         match.setResultRegisteredAt(new Date());
         matchRepo.update(match);
 
+        
         if (match.getGroup() != null) {
             updateTeamStatistics(match.getHomeTeam(), dto.homeGoals, dto.awayGoals);
             updateTeamStatistics(match.getAwayTeam(), dto.awayGoals, dto.homeGoals);
         }
 
-        notificationService.notifyResult(idMatch);
+        
+        notificationService.notifyResult(match);
 
         return toDTO(match);
     }
 
+    
     private void updateTeamStatistics(Team t, int goalsFor, int goalsAgainst) {
         if (t == null) return;
+        
+        
         t.setMatchesPlayed(safe(t.getMatchesPlayed()) + 1);
         t.setGoalsFor(safe(t.getGoalsFor()) + goalsFor);
         t.setGoalsAgainst(safe(t.getGoalsAgainst()) + goalsAgainst);
 
+        
         if (goalsFor > goalsAgainst) {
             t.setWins(safe(t.getWins()) + 1);
-            t.setPoints(safe(t.getPoints()) + 3);
+            t.setPoints(safe(t.getPoints()) + 3); 
         } else if (goalsFor == goalsAgainst) {
             t.setDraws(safe(t.getDraws()) + 1);
-            t.setPoints(safe(t.getPoints()) + 1);
+            t.setPoints(safe(t.getPoints()) + 1); 
         } else {
-            t.setLosses(safe(t.getLosses()) + 1);
+            t.setLosses(safe(t.getLosses()) + 1); 
         }
         teamRepo.update(t);
     }
 
     private int safe(Integer v) { return v != null ? v : 0; }
 
-    // ---- Admin CRUD for matches ----
+    
 
     @Transactional
     @Auditable
@@ -123,18 +133,24 @@ public class StatisticsService {
         if (dto.idAwayTeam != null) { Team t = new Team(); t.setIdTeam(dto.idAwayTeam); m.setAwayTeam(t); }
     }
 
-    // ---- Groups and standings ----
+    
 
     public List<GroupDTO> getGroups() {
         return groupRepo.findAll().stream().map(this::toDTO).collect(Collectors.toList());
     }
 
+    
     public GroupDTO getGroupStandings(Integer id) {
         TournamentGroup g = groupRepo.findById(id);
         if (g == null) return null;
         GroupDTO dto = toDTO(g);
 
         List<Team> teams = groupRepo.findTeamsByGroup(id);
+        
+        
+        
+        
+        
         dto.standings = teams.stream()
             .map(this::toStandingDTO)
             .sorted(Comparator.comparingInt((StandingDTO p) -> p.points)
@@ -146,7 +162,7 @@ public class StatisticsService {
         return dto;
     }
 
-    // ---- Teams ----
+    
 
     public List<TeamDTO> getTeams() {
         return teamRepo.findAll().stream().map(this::toTeamDTO).collect(Collectors.toList());
@@ -157,7 +173,7 @@ public class StatisticsService {
         return t != null ? toTeamDTO(t) : null;
     }
 
-    /** RF10 — Crear una nueva selección desde el panel administrativo. */
+    
     @Transactional
     @Auditable
     public TeamDTO createTeam(TeamInputDTO dto) {
@@ -166,7 +182,7 @@ public class StatisticsService {
         return toTeamDTO(teamRepo.save(t));
     }
 
-    /** RF10 — Actualizar los datos de una selección existente. */
+    
     @Transactional
     @Auditable
     public TeamDTO updateTeam(Integer idTeam, TeamInputDTO dto) {
@@ -193,7 +209,7 @@ public class StatisticsService {
         }
     }
 
-    // ---- Mappers ----
+    
 
     private MatchDTO toDTO(Match m) {
         MatchDTO dto = new MatchDTO();

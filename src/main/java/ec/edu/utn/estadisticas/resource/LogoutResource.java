@@ -9,9 +9,9 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 
-// Esta API usa Basic Auth así que
-// no hay nada que cerrar en este lado. El cierre real pasa en el
-// frontend, cuando borra el email y password que tenía guardado.
+
+
+
 @Path("/logout")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
