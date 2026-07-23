@@ -19,7 +19,7 @@ public class NotificationService {
     private static final String UTNGOLCOIN_URL =
         System.getenv("UTNGOLCOIN_URL") != null
             ? System.getenv("UTNGOLCOIN_URL")
-            : "http://192.168.51.41:57782";
+            : "http://192.168.3.77:57781";
 
 
     private final HttpClient httpClient = HttpClient.newBuilder()

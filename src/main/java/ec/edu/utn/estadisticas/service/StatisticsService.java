@@ -224,6 +224,9 @@ public class StatisticsService {
         dto.venue = m.getVenue() != null ? m.getVenue().getStadium() : null;
         dto.group = m.getGroup() != null ? m.getGroup().getName() : null;
         dto.phase = m.getPhase() != null ? m.getPhase().getName() : null;
+        dto.homeOdds = m.getHomeOdds();
+        dto.awayOdds = m.getAwayOdds();
+        dto.drawOdds = m.getDrawOdds();
         return dto;
     }
 

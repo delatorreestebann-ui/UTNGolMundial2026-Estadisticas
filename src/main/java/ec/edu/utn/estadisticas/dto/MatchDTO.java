@@ -12,4 +12,7 @@ public class MatchDTO {
     public String venue;
     public String group;
     public String phase;
+    public java.math.BigDecimal homeOdds;
+    public java.math.BigDecimal awayOdds;
+    public java.math.BigDecimal drawOdds;
 }
